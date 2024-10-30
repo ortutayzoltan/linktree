@@ -1,0 +1,149 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #1a365d;
+}
+
+#quiz-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.question-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.question-text {
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input[type="text"]:disabled {
+    background-color: #f7fafc;
+}
+
+.hint {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+.feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.correct {
+    color: #48bb78;
+}
+
+.incorrect {
+    color: #f56565;
+}
+
+.correct-answer {
+    font-size: 0.875rem;
+    color: #f56565;
+    margin-top: 0.25rem;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: #e2e8f0;
+    color: #4a5568;
+    transition: background-color 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn.primary {
+    background-color: #4299e1;
+    color: white;
+}
+
+.btn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.progress {
+    text-align: center;
+    margin-top: 1rem;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 640px) {
+    .container {
+        margin: 1rem;
+        padding: 0;
+    }
+
+    #quiz-container {
+        padding: 1rem;
+    }
+
+    .navigation {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
