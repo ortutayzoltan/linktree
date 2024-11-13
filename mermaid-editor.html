@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="mermaidApp">
+<head>
+    <title>Mermaid.js Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            gap: 20px;
+        }
+        .editor {
+            flex: 1;
+            width: 100%;
+            min-height: 200px;
+        }
+        .editor textarea {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: monospace;
+            resize: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .preview {
+            flex: 1;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body ng-controller="MermaidController">
+    <div class="container">
+        <div class="editor">
+            <textarea ng-model="graphDefinition" ng-change="updateGraph()"></textarea>
+        </div>
+        <div class="preview">
+            <div id="graphOutput"></div>
+            <div class="error" ng-show="error">{{ error }}</div>
+        </div>
+    </div>
+
+    <script>
+        angular.module('mermaidApp', [])
+            .controller('MermaidController', function($scope) {
+                // Initialize mermaid
+                mermaid.initialize({ startOnLoad: false });
+
+                // Default mindmap definition
+                $scope.graphDefinition = `mindmap
+  root((Mind Map))
+    Origins
+      Long history
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness and features
+      On Automatic creation
+    Tools
+      Pen and paper
+      Software
+        Desktop
+        Web-based`;
+
+                $scope.error = '';
+
+                $scope.updateGraph = function() {
+                    try {
+                        // Clear previous graph
+                        document.getElementById('graphOutput').innerHTML = '';
+                        
+                        // Render new graph
+                        mermaid.render('graphDiv', $scope.graphDefinition)
+                            .then(({svg}) => {
+                                document.getElementById('graphOutput').innerHTML = svg;
+                                $scope.error = '';
+                                $scope.$apply();
+                            })
+                            .catch(error => {
+                                $scope.error = 'Syntax error in diagram';
+                                $scope.$apply();
+                            });
+                    } catch (error) {
+                        $scope.error = 'Error rendering diagram';
+                        $scope.$apply();
+                    }
+                };
+
+                // Initial render
+                setTimeout($scope.updateGraph, 0);
+            });
+    </script>
+</body>
+</html>
