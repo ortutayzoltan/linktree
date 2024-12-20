@@ -108,6 +108,29 @@
             border-radius: 8px;
             font-size: 14px;
         }
+
+        .export-buttons {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .export-button {
+            padding: 8px 16px;
+            background: #228be6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .export-button:hover {
+            background: #1c7ed6;
+        }
         
         /* Support for dark mode */
         @media (prefers-color-scheme: dark) {
@@ -133,6 +156,12 @@
                 color: #e0e0e0;
                 border-color: #404040;
             }
+            .export-button {
+                background: #74b9ff;
+            }
+            .export-button:hover {
+                background: #228be6;
+            }
         }
     </style>
 </head>
@@ -150,6 +179,10 @@
                 <div class="preview-container">
                     <div id="graphOutput"></div>
                     <div class="error" ng-show="error">{{ error }}</div>
+                    <div class="export-buttons" ng-show="!error">
+                        <button class="export-button" ng-click="exportSVG()">Export SVG</button>
+                        <button class="export-button" ng-click="exportPNG()">Export PNG</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,13 +225,58 @@
                                 $scope.$apply();
                             })
                             .catch(error => {
-                                $scope.error = 'Syntax error in diagram';
+                                $scope.error = error.message || 'Syntax error in diagram';
                                 $scope.$apply();
                             });
                     } catch (error) {
-                        $scope.error = 'Error rendering diagram';
+                        $scope.error = error.message || 'Error rendering diagram';
                         $scope.$apply();
                     }
+                };
+
+                $scope.exportSVG = function() {
+                    const svgContent = document.getElementById('graphOutput').innerHTML;
+                    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'diagram.svg';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                };
+
+                $scope.exportPNG = function() {
+                    const svgElement = document.querySelector('#graphOutput svg');
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    // Convert SVG to data URL
+                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+                    const url = URL.createObjectURL(svgBlob);
+
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        URL.revokeObjectURL(url);
+
+                        canvas.toBlob(function(blob) {
+                            const pngUrl = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = pngUrl;
+                            a.download = 'diagram.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(pngUrl);
+                        }, 'image/png');
+                    };
+
+                    img.src = url;
                 };
 
                 setTimeout($scope.updateGraph, 0);
